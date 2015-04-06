@@ -1,24 +1,18 @@
 package mixmux
 
 import (
+	"net/http"
+
 	"github.com/dimfeld/httptreemux"
-	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
-	"net/http"
-)
-
-const (
-	httpRouter = 1
-	treeMux    = 2
-	apeMux     = 3
 )
 
 var (
-	routerType int
+	WildcardRegex = `[a-zA-Z0-9=\-\/\.]+`
 )
 
-type MixMux interface {
+type MixMuxer interface {
 	OPTIONS(path string, h http.Handler)
 	GET(path string, h http.Handler)
 	POST(path string, h http.Handler)
@@ -28,38 +22,122 @@ type MixMux interface {
 	HEAD(path string, h http.Handler)
 }
 
-func NewHttpRouter() *router {
-	routerType = httpRouter
-	return &router{httprouter.New()}
-}
-
-func NewTreeMux() *treemux {
-	routerType = treeMux
-	return &treemux{httptreemux.New()}
+type apemux struct {
+	*mux.Router
 }
 
 func NewApeMux() *apemux {
-	routerType = apeMux
 	return &apemux{mux.NewRouter()}
 }
 
-type Params [1]map[string]string
-
-func (ps Params) ByName(name string) string {
-	if v, ok := ps[0][name]; ok {
-		return v
-	}
-
-	return ""
+func (am *apemux) OPTIONS(path string, h http.Handler) {
+	am.Handle(path, h).Methods("OPTIONS")
 }
 
-func GetParams(r *http.Request) Params {
-	switch routerType {
-	case httpRouter, treeMux:
-		return context.Get(r, "params").(Params)
-	case apeMux:
-		return Params{mux.Vars(r)}
-	}
+func (am *apemux) GET(path string, h http.Handler) {
+	am.Handle(path, h).Methods("GET")
+}
 
-	return Params{}
+func (am *apemux) POST(path string, h http.Handler) {
+	am.Handle(path, h).Methods("POST")
+}
+
+func (am *apemux) PUT(path string, h http.Handler) {
+	am.Handle(path, h).Methods("PUT")
+}
+
+func (am *apemux) PATCH(path string, h http.Handler) {
+	am.Handle(path, h).Methods("PATCH")
+}
+
+func (am *apemux) DELETE(path string, h http.Handler) {
+	am.Handle(path, h).Methods("DELETE")
+}
+
+func (am *apemux) HEAD(path string, h http.Handler) {
+	am.Handle(path, h).Methods("HEAD")
+}
+
+type router struct {
+	*httprouter.Router
+}
+
+func NewHttpRouter() *router {
+	return &router{httprouter.New()}
+}
+
+func (r *router) OPTIONS(path string, h http.Handler) {
+	r.Handle("OPTIONS", path, httpRouterWrapHandler(h))
+}
+
+func (r *router) GET(path string, h http.Handler) {
+	r.Handle("GET", path, httpRouterWrapHandler(h))
+}
+
+func (r *router) POST(path string, h http.Handler) {
+	r.Handle("POST", path, httpRouterWrapHandler(h))
+}
+
+func (r *router) PUT(path string, h http.Handler) {
+	r.Handle("PUT", path, httpRouterWrapHandler(h))
+}
+
+func (r *router) PATCH(path string, h http.Handler) {
+	r.Handle("PATCH", path, httpRouterWrapHandler(h))
+}
+
+func (r *router) DELETE(path string, h http.Handler) {
+	r.Handle("DELETE", path, httpRouterWrapHandler(h))
+}
+
+func (r *router) HEAD(path string, h http.Handler) {
+	r.Handle("HEAD", path, httpRouterWrapHandler(h))
+}
+
+func httpRouterWrapHandler(h http.Handler) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		h.ServeHTTP(w, r)
+	}
+}
+
+type treemux struct {
+	*httptreemux.TreeMux
+}
+
+func NewTreeMux() *treemux {
+	return &treemux{httptreemux.New()}
+}
+
+func (tm *treemux) OPTIONS(path string, h http.Handler) {
+	tm.Handle("OPTIONS", path, treeMuxWrapHandler(h))
+}
+
+func (tm *treemux) GET(path string, h http.Handler) {
+	tm.Handle("GET", path, treeMuxWrapHandler(h))
+}
+
+func (tm *treemux) POST(path string, h http.Handler) {
+	tm.Handle("POST", path, treeMuxWrapHandler(h))
+}
+
+func (tm *treemux) PUT(path string, h http.Handler) {
+	tm.Handle("PUT", path, treeMuxWrapHandler(h))
+}
+
+func (tm *treemux) PATCH(path string, h http.Handler) {
+	tm.Handle("PATCH", path, treeMuxWrapHandler(h))
+}
+
+func (tm *treemux) DELETE(path string, h http.Handler) {
+	tm.Handle("DELETE", path, treeMuxWrapHandler(h))
+}
+
+func (tm *treemux) HEAD(path string, h http.Handler) {
+	tm.Handle("HEAD", path, treeMuxWrapHandler(h))
+}
+
+func treeMuxWrapHandler(h http.Handler) httptreemux.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request, _ map[string]string) {
+		h.ServeHTTP(w, r)
+	}
 }

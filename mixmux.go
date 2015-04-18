@@ -9,88 +9,108 @@ import (
 )
 
 var (
+	// WildcardRegex is a convenience var for working with Gorilla Mux.
 	WildcardRegex = `[a-zA-Z0-9=\-\/\.]+`
 )
 
+// MixMuxer defines available methods for wrapped multiplexers.
 type MixMuxer interface {
-	OPTIONS(path string, h http.Handler)
-	GET(path string, h http.Handler)
-	POST(path string, h http.Handler)
-	PUT(path string, h http.Handler)
-	PATCH(path string, h http.Handler)
-	DELETE(path string, h http.Handler)
-	HEAD(path string, h http.Handler)
+	Options(path string, h http.Handler)
+	Get(path string, h http.Handler)
+	Post(path string, h http.Handler)
+	Put(path string, h http.Handler)
+	Patch(path string, h http.Handler)
+	Delete(path string, h http.Handler)
+	Head(path string, h http.Handler)
 }
 
-type apemux struct {
+// ApeMux wraps Gorilla Mux.
+type ApeMux struct {
 	*mux.Router
 }
 
-func NewApeMux() *apemux {
-	return &apemux{mux.NewRouter()}
+// NewApeMux returns a wrapped Gorilla Mux
+func NewApeMux() *ApeMux {
+	return &ApeMux{mux.NewRouter()}
 }
 
-func (am *apemux) OPTIONS(path string, h http.Handler) {
+// Options takes a path and http.Handler and adds them to the mux.
+func (am *ApeMux) Options(path string, h http.Handler) {
 	am.Handle(path, h).Methods("OPTIONS")
 }
 
-func (am *apemux) GET(path string, h http.Handler) {
+// Get takes a path and http.Handler and adds them to the mux.
+func (am *ApeMux) Get(path string, h http.Handler) {
 	am.Handle(path, h).Methods("GET")
 }
 
-func (am *apemux) POST(path string, h http.Handler) {
+// Post takes a path and http.Handler and adds them to the mux.
+func (am *ApeMux) Post(path string, h http.Handler) {
 	am.Handle(path, h).Methods("POST")
 }
 
-func (am *apemux) PUT(path string, h http.Handler) {
+// Put takes a path and http.Handler and adds them to the mux.
+func (am *ApeMux) Put(path string, h http.Handler) {
 	am.Handle(path, h).Methods("PUT")
 }
 
-func (am *apemux) PATCH(path string, h http.Handler) {
+// Patch takes a path and http.Handler and adds them to the mux.
+func (am *ApeMux) Patch(path string, h http.Handler) {
 	am.Handle(path, h).Methods("PATCH")
 }
 
-func (am *apemux) DELETE(path string, h http.Handler) {
+// Delete takes a path and http.Handler and adds them to the mux.
+func (am *ApeMux) Delete(path string, h http.Handler) {
 	am.Handle(path, h).Methods("DELETE")
 }
 
-func (am *apemux) HEAD(path string, h http.Handler) {
+// Head takes a path and http.Handler and adds them to the mux.
+func (am *ApeMux) Head(path string, h http.Handler) {
 	am.Handle(path, h).Methods("HEAD")
 }
 
-type router struct {
+// Router wraps HTTPRouter.
+type Router struct {
 	*httprouter.Router
 }
 
-func NewHttpRouter() *router {
-	return &router{httprouter.New()}
+// NewHTTPRouter returns a wrapped HTTPRouter.
+func NewHTTPRouter() *Router {
+	return &Router{httprouter.New()}
 }
 
-func (r *router) OPTIONS(path string, h http.Handler) {
+// Options takes a path and http.Handler and adds them to the mux.
+func (r *Router) Options(path string, h http.Handler) {
 	r.Handle("OPTIONS", path, httpRouterWrapHandler(h))
 }
 
-func (r *router) GET(path string, h http.Handler) {
+// Get takes a path and http.Handler and adds them to the mux.
+func (r *Router) Get(path string, h http.Handler) {
 	r.Handle("GET", path, httpRouterWrapHandler(h))
 }
 
-func (r *router) POST(path string, h http.Handler) {
+// Post takes a path and http.Handler and adds them to the mux.
+func (r *Router) Post(path string, h http.Handler) {
 	r.Handle("POST", path, httpRouterWrapHandler(h))
 }
 
-func (r *router) PUT(path string, h http.Handler) {
+// Put takes a path and http.Handler and adds them to the mux.
+func (r *Router) Put(path string, h http.Handler) {
 	r.Handle("PUT", path, httpRouterWrapHandler(h))
 }
 
-func (r *router) PATCH(path string, h http.Handler) {
+// Patch takes a path and http.Handler and adds them to the mux.
+func (r *Router) Patch(path string, h http.Handler) {
 	r.Handle("PATCH", path, httpRouterWrapHandler(h))
 }
 
-func (r *router) DELETE(path string, h http.Handler) {
+// Delete takes a path and http.Handler and adds them to the mux.
+func (r *Router) Delete(path string, h http.Handler) {
 	r.Handle("DELETE", path, httpRouterWrapHandler(h))
 }
 
-func (r *router) HEAD(path string, h http.Handler) {
+// Head takes a path and http.Handler and adds them to the mux.
+func (r *Router) Head(path string, h http.Handler) {
 	r.Handle("HEAD", path, httpRouterWrapHandler(h))
 }
 
@@ -100,39 +120,48 @@ func httpRouterWrapHandler(h http.Handler) httprouter.Handle {
 	}
 }
 
-type treemux struct {
+// TreeMux wraps HTTPTreeMux.
+type TreeMux struct {
 	*httptreemux.TreeMux
 }
 
-func NewTreeMux() *treemux {
-	return &treemux{httptreemux.New()}
+// NewTreeMux returns a wrapped HTTPTreeMux.
+func NewTreeMux() *TreeMux {
+	return &TreeMux{httptreemux.New()}
 }
 
-func (tm *treemux) OPTIONS(path string, h http.Handler) {
+// Options takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Options(path string, h http.Handler) {
 	tm.Handle("OPTIONS", path, treeMuxWrapHandler(h))
 }
 
-func (tm *treemux) GET(path string, h http.Handler) {
+// Get takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Get(path string, h http.Handler) {
 	tm.Handle("GET", path, treeMuxWrapHandler(h))
 }
 
-func (tm *treemux) POST(path string, h http.Handler) {
+// Post takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Post(path string, h http.Handler) {
 	tm.Handle("POST", path, treeMuxWrapHandler(h))
 }
 
-func (tm *treemux) PUT(path string, h http.Handler) {
+// Put takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Put(path string, h http.Handler) {
 	tm.Handle("PUT", path, treeMuxWrapHandler(h))
 }
 
-func (tm *treemux) PATCH(path string, h http.Handler) {
+// Patch takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Patch(path string, h http.Handler) {
 	tm.Handle("PATCH", path, treeMuxWrapHandler(h))
 }
 
-func (tm *treemux) DELETE(path string, h http.Handler) {
+// Delete takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Delete(path string, h http.Handler) {
 	tm.Handle("DELETE", path, treeMuxWrapHandler(h))
 }
 
-func (tm *treemux) HEAD(path string, h http.Handler) {
+// Head takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Head(path string, h http.Handler) {
 	tm.Handle("HEAD", path, treeMuxWrapHandler(h))
 }
 

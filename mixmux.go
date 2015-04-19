@@ -4,13 +4,7 @@ import (
 	"net/http"
 
 	"github.com/dimfeld/httptreemux"
-	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
-)
-
-var (
-	// WildcardRegex is a convenience var for working with Gorilla Mux.
-	WildcardRegex = `[a-zA-Z0-9=\-\/\.]+`
 )
 
 // MixMuxer defines available methods for wrapped multiplexers.
@@ -22,51 +16,6 @@ type MixMuxer interface {
 	Patch(path string, h http.Handler)
 	Delete(path string, h http.Handler)
 	Head(path string, h http.Handler)
-}
-
-// ApeMux wraps Gorilla Mux.
-type ApeMux struct {
-	*mux.Router
-}
-
-// NewApeMux returns a wrapped Gorilla Mux
-func NewApeMux() *ApeMux {
-	return &ApeMux{mux.NewRouter()}
-}
-
-// Options takes a path and http.Handler and adds them to the mux.
-func (am *ApeMux) Options(path string, h http.Handler) {
-	am.Handle(path, h).Methods("OPTIONS")
-}
-
-// Get takes a path and http.Handler and adds them to the mux.
-func (am *ApeMux) Get(path string, h http.Handler) {
-	am.Handle(path, h).Methods("GET")
-}
-
-// Post takes a path and http.Handler and adds them to the mux.
-func (am *ApeMux) Post(path string, h http.Handler) {
-	am.Handle(path, h).Methods("POST")
-}
-
-// Put takes a path and http.Handler and adds them to the mux.
-func (am *ApeMux) Put(path string, h http.Handler) {
-	am.Handle(path, h).Methods("PUT")
-}
-
-// Patch takes a path and http.Handler and adds them to the mux.
-func (am *ApeMux) Patch(path string, h http.Handler) {
-	am.Handle(path, h).Methods("PATCH")
-}
-
-// Delete takes a path and http.Handler and adds them to the mux.
-func (am *ApeMux) Delete(path string, h http.Handler) {
-	am.Handle(path, h).Methods("DELETE")
-}
-
-// Head takes a path and http.Handler and adds them to the mux.
-func (am *ApeMux) Head(path string, h http.Handler) {
-	am.Handle(path, h).Methods("HEAD")
 }
 
 // Router wraps HTTPRouter.

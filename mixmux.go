@@ -1,3 +1,5 @@
+// Package mixmux wraps HTTPRouter and HTTPTreeMux to provide more consistent
+// and more idiomatic APIs.
 package mixmux
 
 import (

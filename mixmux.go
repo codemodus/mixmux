@@ -85,12 +85,12 @@ type TreeMux struct {
 
 // NewTreeMux returns a wrapped HTTPTreeMux.
 func NewTreeMux() *TreeMux {
-	return &TreeMux{httptreemux.New()}
+	return &TreeMux{httptreemux.New(), ""}
 }
 
 // Group takes a path and returns a new TreeMux around the original HTTPTreeMux.
 func (tm *TreeMux) Group(path string) *TreeMux {
-	return &Router{tm.TreeMux, tm.path + path}
+	return &TreeMux{tm.TreeMux, tm.path + path}
 }
 
 // Options takes a path and http.Handler and adds them to the mux.

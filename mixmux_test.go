@@ -91,7 +91,7 @@ func TestRouterMethods(t *testing.T) {
 	for k, v := range tMap {
 		rb, err := getReqBody(s.URL+k, v)
 		if err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 		want := v
 		got := rb
@@ -117,7 +117,7 @@ func TestTreeMuxMethods(t *testing.T) {
 	for k, v := range tMap {
 		rb, err := getReqBody(s.URL+k, v)
 		if err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 		want := v
 		got := rb

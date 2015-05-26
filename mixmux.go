@@ -1,5 +1,6 @@
-// Package mixmux wraps HTTPRouter and HTTPTreeMux to provide more consistent
-// and idiomatic APIs, along with route grouping.
+// Package mixmux wraps HTTPRouter and HTTPTreeMux to provide consistent and
+// idiomatic APIs, along with route grouping.  Multiplexer-specific parameter
+// handling is bypassed.
 package mixmux
 
 import (

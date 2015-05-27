@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/codemodus/mixmux"
+	"github.com/dimfeld/httptreemux"
+	"github.com/julienschmidt/httprouter"
 )
 
 const (
@@ -151,4 +153,105 @@ func methodHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	_, _ = w.Write([]byte(r.Method))
 	return
+}
+
+func BenchmarkHTTPServeMux(b *testing.B) {
+	m := http.NewServeMux()
+	m.Handle("/test/1",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			return
+		}),
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/1")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkHTTPRouter(b *testing.B) {
+	m := httprouter.New()
+	m.Handle("GET", "/test/test/:id",
+		func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			return
+		},
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/test/2")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkRouterWrap(b *testing.B) {
+	m := mixmux.NewRouter()
+	m.Get("/test/1",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			return
+		}),
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/1")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkHTTPTreeMux(b *testing.B) {
+	m := httptreemux.New()
+	m.Handle("GET", "/test/:id",
+		func(w http.ResponseWriter, r *http.Request, m map[string]string) {
+			_, _ = m["id"]
+			return
+		},
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/1")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkTreeMuxWrap(b *testing.B) {
+	m := mixmux.NewTreeMux()
+	m.Get("/test/1",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			return
+		}),
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/1")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
 }

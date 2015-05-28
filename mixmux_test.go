@@ -157,7 +157,7 @@ func methodHandler(w http.ResponseWriter, r *http.Request) {
 
 func BenchmarkHTTPServeMux(b *testing.B) {
 	m := http.NewServeMux()
-	m.Handle("/test/1",
+	m.Handle("/test/test/1/test",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			return
 		}),
@@ -165,49 +165,8 @@ func BenchmarkHTTPServeMux(b *testing.B) {
 	s := httptest.NewServer(m)
 
 	b.ResetTimer()
-
 	for n := 0; n < b.N; n++ {
-		re0, err := http.Get(s.URL + "/test/1")
-		if err != nil {
-			b.Error(err)
-		}
-		_ = re0.Body.Close()
-	}
-}
-
-func BenchmarkHTTPRouter(b *testing.B) {
-	m := httprouter.New()
-	m.Handle("GET", "/test/test/:id",
-		func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-			return
-		},
-	)
-	s := httptest.NewServer(m)
-
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		re0, err := http.Get(s.URL + "/test/test/2")
-		if err != nil {
-			b.Error(err)
-		}
-		_ = re0.Body.Close()
-	}
-}
-
-func BenchmarkRouterWrap(b *testing.B) {
-	m := mixmux.NewRouter()
-	m.Get("/test/1",
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			return
-		}),
-	)
-	s := httptest.NewServer(m)
-
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		re0, err := http.Get(s.URL + "/test/1")
+		re0, err := http.Get(s.URL + "/test/test/1/test")
 		if err != nil {
 			b.Error(err)
 		}
@@ -217,7 +176,7 @@ func BenchmarkRouterWrap(b *testing.B) {
 
 func BenchmarkHTTPTreeMux(b *testing.B) {
 	m := httptreemux.New()
-	m.Handle("GET", "/test/:id",
+	m.Handle("GET", "/test/test/:id/test",
 		func(w http.ResponseWriter, r *http.Request, m map[string]string) {
 			_, _ = m["id"]
 			return
@@ -226,9 +185,8 @@ func BenchmarkHTTPTreeMux(b *testing.B) {
 	s := httptest.NewServer(m)
 
 	b.ResetTimer()
-
 	for n := 0; n < b.N; n++ {
-		re0, err := http.Get(s.URL + "/test/1")
+		re0, err := http.Get(s.URL + "/test/test/1/test")
 		if err != nil {
 			b.Error(err)
 		}
@@ -238,7 +196,7 @@ func BenchmarkHTTPTreeMux(b *testing.B) {
 
 func BenchmarkTreeMuxWrap(b *testing.B) {
 	m := mixmux.NewTreeMux()
-	m.Get("/test/1",
+	m.Get("/test/test/:id/test",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			return
 		}),
@@ -246,9 +204,66 @@ func BenchmarkTreeMuxWrap(b *testing.B) {
 	s := httptest.NewServer(m)
 
 	b.ResetTimer()
-
 	for n := 0; n < b.N; n++ {
-		re0, err := http.Get(s.URL + "/test/1")
+		re0, err := http.Get(s.URL + "/test/test/1/test")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkHTTPRouter(b *testing.B) {
+	m := httprouter.New()
+	m.Handle("GET", "/test/test/:id/test",
+		func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			return
+		},
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/test/1/test")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkRouterWrap(b *testing.B) {
+	m := mixmux.NewRouter()
+	m.Get("/test/test/:id/test",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			return
+		}),
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/test/1/test")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkRouterWrapGroup(b *testing.B) {
+	m := mixmux.NewRouter()
+	mg := m.Group("/test")
+	mg.Get("/test/:id/test",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			return
+		}),
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/test/1/test")
 		if err != nil {
 			b.Error(err)
 		}

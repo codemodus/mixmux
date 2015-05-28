@@ -1,5 +1,5 @@
 // Package mixmux wraps HTTPRouter and HTTPTreeMux to provide consistent and
-// idiomatic APIs, along with route grouping.  Multiplexer-specific parameter
+// idiomatic APIs, along with route grouping.  Multiplexer-based parameter
 // handling is bypassed.
 package mixmux
 

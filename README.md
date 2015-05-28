@@ -3,7 +3,7 @@
     go get "github.com/codemodus/mixmux"
 
 Package mixmux wraps HTTPRouter and HTTPTreeMux to provide consistent and
-idiomatic APIs, along with route grouping.  Multiplexer-specific parameter 
+idiomatic APIs, along with route grouping.  Multiplexer-based parameter 
 handling is bypassed.
 
 ## Usage
@@ -58,11 +58,11 @@ func main() {
 
 ## More Info
 
-### Why is multiplexer-specific parameter handling bypassed?
+### Why is multiplexer-based parameter handling bypassed?
 
-Multiplexer-specific parameter handling is bypassed in favor of a single 
-solution that is multiplexer-agnostic.  Please review codemodus/parth for a 
-simple and effective package covering this need.
+Multiplexer-based parameter handling is bypassed in favor of a single solution 
+that is multiplexer-agnostic.  Please review codemodus/parth for a simple and 
+effective package covering this need.
 
 ## Documentation
 

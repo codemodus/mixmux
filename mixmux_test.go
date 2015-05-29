@@ -155,7 +155,7 @@ func methodHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func BenchmarkHTTPServeMux(b *testing.B) {
+func BenchmarkHTTPServeMux0(b *testing.B) {
 	m := http.NewServeMux()
 	m.Handle("/test/test/1/test",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -174,9 +174,9 @@ func BenchmarkHTTPServeMux(b *testing.B) {
 	}
 }
 
-func BenchmarkHTTPTreeMux(b *testing.B) {
+func BenchmarkHTTPTreeMux2(b *testing.B) {
 	m := httptreemux.New()
-	m.Handle("GET", "/test/test/:id/test",
+	m.Handle("GET", "/test/test/:id/:last",
 		func(w http.ResponseWriter, r *http.Request, m map[string]string) {
 			_, _ = m["id"]
 			return
@@ -194,28 +194,9 @@ func BenchmarkHTTPTreeMux(b *testing.B) {
 	}
 }
 
-func BenchmarkTreeMuxWrap(b *testing.B) {
-	m := mixmux.NewTreeMux()
-	m.Get("/test/test/:id/test",
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			return
-		}),
-	)
-	s := httptest.NewServer(m)
-
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		re0, err := http.Get(s.URL + "/test/test/1/test")
-		if err != nil {
-			b.Error(err)
-		}
-		_ = re0.Body.Close()
-	}
-}
-
-func BenchmarkHTTPRouter(b *testing.B) {
+func BenchmarkHTTPRouter2(b *testing.B) {
 	m := httprouter.New()
-	m.Handle("GET", "/test/test/:id/test",
+	m.Handle("GET", "/test/test/:id/:last",
 		func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 			return
 		},
@@ -232,9 +213,9 @@ func BenchmarkHTTPRouter(b *testing.B) {
 	}
 }
 
-func BenchmarkRouterWrap(b *testing.B) {
-	m := mixmux.NewRouter()
-	m.Get("/test/test/:id/test",
+func BenchmarkMixmuxTreeMux2(b *testing.B) {
+	m := mixmux.NewTreeMux()
+	m.Get("/test/test/:id/:last",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			return
 		}),
@@ -251,10 +232,29 @@ func BenchmarkRouterWrap(b *testing.B) {
 	}
 }
 
-func BenchmarkRouterWrapGroup(b *testing.B) {
+func BenchmarkMixmuxRouter2(b *testing.B) {
+	m := mixmux.NewRouter()
+	m.Get("/test/test/:id/:last",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			return
+		}),
+	)
+	s := httptest.NewServer(m)
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		re0, err := http.Get(s.URL + "/test/test/1/test")
+		if err != nil {
+			b.Error(err)
+		}
+		_ = re0.Body.Close()
+	}
+}
+
+func BenchmarkMixmuxRouterGroup2(b *testing.B) {
 	m := mixmux.NewRouter()
 	mg := m.Group("/test")
-	mg.Get("/test/:id/test",
+	mg.Get("/test/:id/:last",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			return
 		}),

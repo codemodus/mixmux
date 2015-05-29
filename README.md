@@ -67,3 +67,18 @@ effective package covering this need.
 ## Documentation
 
 View the [GoDoc](http://godoc.org/github.com/codemodus/mixmux)
+
+## Benchmarks
+
+These results demonstrate that mixmux does not increase resource usage.  The 
+digit suffix indicates how many named parameters are used.  http.ServeMux is 
+included for reference.
+
+    benchmark                       iter      time/iter   bytes alloc         allocs
+    ---------                       ----      ---------   -----------         ------
+    BenchmarkHTTPServeMux0        200000    55.55 μs/op     3547 B/op   54 allocs/op
+    BenchmarkHTTPTreeMux2         200000    55.57 μs/op     3879 B/op   56 allocs/op
+    BenchmarkHTTPRouter2          200000    54.16 μs/op     3600 B/op   55 allocs/op
+    BenchmarkMixmuxTreeMux2       200000    55.26 μs/op     3869 B/op   56 allocs/op
+    BenchmarkMixmuxRouter2        200000    54.75 μs/op     3593 B/op   55 allocs/op
+    BenchmarkMixmuxRouterGroup2   200000    54.48 μs/op     3592 B/op   55 allocs/op

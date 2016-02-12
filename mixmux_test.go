@@ -37,7 +37,7 @@ var (
 func Example() {
 	handler := http.HandlerFunc(methodHandler)
 
-	mux := mixmux.NewRouter()
+	mux := mixmux.NewRouter(nil)
 	mux.Get("/get", handler)
 	mux.Post("/post", handler)
 
@@ -79,7 +79,7 @@ func Example() {
 
 func TestRouterMethods(t *testing.T) {
 	h := http.HandlerFunc(methodHandler)
-	m := mixmux.NewRouter()
+	m := mixmux.NewRouter(nil)
 	mg := m.Group("/grouped")
 	mg.Options("/options", h)
 	mg.Get("/get", h)
@@ -233,7 +233,7 @@ func BenchmarkMixmuxTreeMux2(b *testing.B) {
 }
 
 func BenchmarkMixmuxRouter2(b *testing.B) {
-	m := mixmux.NewRouter()
+	m := mixmux.NewRouter(nil)
 	m.Get("/test/test/:id/:last",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			return
@@ -252,7 +252,7 @@ func BenchmarkMixmuxRouter2(b *testing.B) {
 }
 
 func BenchmarkMixmuxRouterGroup2(b *testing.B) {
-	m := mixmux.NewRouter()
+	m := mixmux.NewRouter(nil)
 	mg := m.Group("/test")
 	mg.Get("/test/:id/:last",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

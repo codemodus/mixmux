@@ -89,6 +89,10 @@ func (r *Router) Head(path string, h http.Handler) {
 	r.hr.Handler("HEAD", r.path+path, h)
 }
 
+func (r *Router) Handle(method string, path string, h http.Handler) {
+	r.hr.Handler(method, path, h)
+}
+
 func (mr *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	mr.hr.ServeHTTP(w, r)
 }
@@ -145,6 +149,10 @@ func (tm *TreeMux) Delete(path string, h http.Handler) {
 // Head takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Head(path string, h http.Handler) {
 	tm.tm.Handle("HEAD", tm.path+path, treeMuxWrapper(h))
+}
+
+func (tm *TreeMux) Handle(method string, path string, h http.Handler) {
+	tm.tm.Handle(method, path, treeMuxWrapper(h))
 }
 
 func (tm *TreeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {

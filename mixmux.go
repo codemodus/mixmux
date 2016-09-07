@@ -10,6 +10,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// Options holds available options for a new Router.
 type Options struct {
 	RedirectTrailingSlash  bool
 	RedirectFixedPath      bool
@@ -89,12 +90,15 @@ func (r *Router) Head(path string, h http.Handler) {
 	r.hr.Handler("HEAD", r.path+path, h)
 }
 
+// Handle receives an HTTP method, path, and http.Handler and adds them to
+// the mux.
 func (r *Router) Handle(method string, path string, h http.Handler) {
 	r.hr.Handler(method, path, h)
 }
 
-func (mr *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	mr.hr.ServeHTTP(w, r)
+// ServeHTTP satisfies the http.Handler interface.
+func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	r.hr.ServeHTTP(w, req)
 }
 
 // TreeMux wraps HTTPTreeMux.
@@ -151,10 +155,13 @@ func (tm *TreeMux) Head(path string, h http.Handler) {
 	tm.tm.Handle("HEAD", tm.path+path, treeMuxWrapper(h))
 }
 
+// Handle receives an HTTP method, path, and http.Handler and adds them to
+// the mux.
 func (tm *TreeMux) Handle(method string, path string, h http.Handler) {
 	tm.tm.Handle(method, path, treeMuxWrapper(h))
 }
 
+// ServeHTTP satisfies the http.Handler interface.
 func (tm *TreeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tm.tm.ServeHTTP(w, r)
 }

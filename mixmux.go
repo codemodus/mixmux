@@ -43,7 +43,6 @@ type Options struct {
 	RedirectTrailingSlash  bool
 	RedirectFixedPath      bool
 	HandleMethodNotAllowed bool
-	HandleOptions          bool
 	NotFound               http.Handler
 	MethodNotAllowed       http.Handler
 }
@@ -61,16 +60,13 @@ func NewRouter(opts *Options) *Router {
 	}
 
 	if opts == nil {
-		r.hr = httprouter.New()
-
-		return r
+		opts = &Options{}
 	}
 
 	r.hr = &httprouter.Router{
 		RedirectTrailingSlash:  opts.RedirectTrailingSlash,
 		RedirectFixedPath:      opts.RedirectFixedPath,
 		HandleMethodNotAllowed: opts.HandleMethodNotAllowed,
-		HandleOPTIONS:          opts.HandleOptions,
 		NotFound:               opts.NotFound,
 		MethodNotAllowed:       opts.MethodNotAllowed,
 	}

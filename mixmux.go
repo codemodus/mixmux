@@ -5,9 +5,37 @@ package mixmux
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/dimfeld/httptreemux"
 	"github.com/julienschmidt/httprouter"
+)
+
+var (
+	DefaultHeaders = []string{
+		"Accept",
+		"Accept-Encoding",
+		"Accept-Version",
+		"Content-Length",
+		"Content-MD5",
+		"Content-Type",
+		"Date",
+		"Origin",
+		"X-Api-Version",
+		"X-Requested-With",
+	}
+
+	methods = []string{
+		http.MethodGet,
+		http.MethodPost,
+		http.MethodPut,
+		http.MethodHead,
+		http.MethodTrace,
+		http.MethodPatch,
+		http.MethodDelete,
+		http.MethodOptions,
+		http.MethodConnect,
+	}
 )
 
 // Options holds available options for a new Router.
@@ -94,6 +122,52 @@ func (r *Router) Head(path string, h http.Handler) {
 // the mux.
 func (r *Router) Handle(method string, path string, h http.Handler) {
 	r.hr.Handler(method, path, h)
+}
+
+func (r *Router) OptionsAuto(path string, outer func(http.Handler) http.Handler, headers []string) {
+	h, _, s := r.hr.Lookup(http.MethodOptions, path)
+	if s {
+		h, _, _ = r.hr.Lookup(http.MethodOptions, path)
+	}
+	if h != nil {
+		return
+	}
+
+	ms := []string{http.MethodOptions}
+
+	for _, v := range methods {
+		if v == http.MethodOptions {
+			continue
+		}
+
+		h, _, s = r.hr.Lookup(v, path)
+		if s {
+			h, _, _ = r.hr.Lookup(v, path)
+		}
+		if h == nil {
+			continue
+		}
+
+		ms = append(ms, v)
+	}
+
+	if len(headers) == 0 {
+		headers = DefaultHeaders
+	}
+	hdrs := strings.Join(headers, ", ")
+	opts := strings.Join(ms, ", ")
+
+	var fn http.Handler
+	fn = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Methods", opts)
+		w.Header().Set("Access-Control-Allow-Headers", hdrs)
+	})
+
+	if outer != nil {
+		fn = outer(fn)
+	}
+
+	r.hr.Handler(http.MethodOptions, path, fn)
 }
 
 // ServeHTTP satisfies the http.Handler interface.

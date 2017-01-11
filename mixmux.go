@@ -178,11 +178,31 @@ type TreeMux struct {
 }
 
 // NewTreeMux returns a wrapped HTTPTreeMux.
-func NewTreeMux() *TreeMux {
-	return &TreeMux{
+func NewTreeMux(opts *Options) *TreeMux {
+	t := &TreeMux{
 		tm:   httptreemux.New(),
 		path: "",
 	}
+
+	if opts == nil {
+		opts = &Options{}
+	}
+
+	if opts.NotFound != nil {
+		t.tm.NotFoundHandler = opts.NotFound.ServeHTTP
+	}
+
+	if opts.MethodNotAllowed != nil {
+		t.tm.MethodNotAllowedHandler = func(w http.ResponseWriter, r *http.Request, m map[string]httptreemux.HandlerFunc) {
+			opts.MethodNotAllowed.ServeHTTP(w, r)
+		}
+	}
+
+	t.tm.RedirectTrailingSlash = opts.RedirectTrailingSlash
+	t.tm.RedirectCleanPath = opts.RedirectFixedPath
+	t.tm.RedirectTrailingSlash = true
+
+	return t
 }
 
 // Group takes a path and returns a new TreeMux wrapping the original TreeMux.

@@ -123,7 +123,7 @@ func (r *Router) Handle(method string, path string, h http.Handler) {
 func (r *Router) OptionsAuto(path string, outer func(http.Handler) http.Handler, headers []string) {
 	h, _, s := r.hr.Lookup(http.MethodOptions, path)
 	if s {
-		h, _, _ = r.hr.Lookup(http.MethodOptions, path)
+		h, _, _ = r.hr.Lookup(http.MethodOptions, path+"/")
 	}
 	if h != nil {
 		return
@@ -138,7 +138,7 @@ func (r *Router) OptionsAuto(path string, outer func(http.Handler) http.Handler,
 
 		h, _, s = r.hr.Lookup(v, path)
 		if s {
-			h, _, _ = r.hr.Lookup(v, path)
+			h, _, _ = r.hr.Lookup(v, path+"/")
 		}
 		if h == nil {
 			continue

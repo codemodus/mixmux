@@ -120,7 +120,7 @@ func (r *Router) Handle(method string, path string, h http.Handler) {
 	r.hr.Handler(method, path, h)
 }
 
-func (r *Router) OptionsAuto(path string, outer func(http.Handler) http.Handler, headers []string) {
+func (r *Router) OptionsAuto(path string, handlerWrapper func(http.Handler) http.Handler) {
 	h, _, s := r.hr.Lookup(http.MethodOptions, path)
 	if s {
 		h, _, _ = r.hr.Lookup(http.MethodOptions, path+"/")
@@ -147,20 +147,15 @@ func (r *Router) OptionsAuto(path string, outer func(http.Handler) http.Handler,
 		ms = append(ms, v)
 	}
 
-	if len(headers) == 0 {
-		headers = DefaultHeaders
-	}
-	hdrs := strings.Join(headers, ", ")
 	opts := strings.Join(ms, ", ")
 
 	var fn http.Handler
 	fn = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Methods", opts)
-		w.Header().Set("Access-Control-Allow-Headers", hdrs)
 	})
 
-	if outer != nil {
-		fn = outer(fn)
+	if handlerWrapper != nil {
+		fn = handlerWrapper(fn)
 	}
 
 	r.hr.Handler(http.MethodOptions, path, fn)

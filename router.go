@@ -85,8 +85,8 @@ func (m *Router) Connect(path string, h http.Handler) {
 	m.r.Handler(http.MethodConnect, m.path+path, h)
 }
 
-// OptionsAuto ... TODO:
-func (m *Router) OptionsAuto(path string, handlerWrapper func(http.Handler) http.Handler) {
+// OptionsHeaders ... TODO:
+func (m *Router) OptionsHeaders(path string, handlerWrappers ...func(http.Handler) http.Handler) {
 	h, _, s := m.r.Lookup(http.MethodOptions, path)
 	if s {
 		h, _, _ = m.r.Lookup(http.MethodOptions, path+"/")
@@ -120,8 +120,10 @@ func (m *Router) OptionsAuto(path string, handlerWrapper func(http.Handler) http
 		w.Header().Set("Access-Control-Allow-Methods", opts)
 	})
 
-	if handlerWrapper != nil {
-		fn = handlerWrapper(fn)
+	for _, wrap := range handlerWrappers {
+		if wrap != nil {
+			fn = wrap(fn)
+		}
 	}
 
 	m.r.Handler(http.MethodOptions, path, fn)

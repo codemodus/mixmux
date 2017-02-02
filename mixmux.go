@@ -12,19 +12,6 @@ import (
 )
 
 var (
-	DefaultHeaders = []string{
-		"Accept",
-		"Accept-Encoding",
-		"Accept-Version",
-		"Content-Length",
-		"Content-MD5",
-		"Content-Type",
-		"Date",
-		"Origin",
-		"X-Api-Version",
-		"X-Requested-With",
-	}
-
 	methods = []string{
 		http.MethodGet,
 		http.MethodPost,
@@ -81,45 +68,50 @@ func (r *Router) Group(path string) *Router {
 
 // Options takes a path and http.Handler and adds them to the mux.
 func (r *Router) Options(path string, h http.Handler) {
-	r.hr.Handler("OPTIONS", r.path+path, h)
+	r.hr.Handler(http.MethodOptions, r.path+path, h)
 }
 
 // Get takes a path and http.Handler and adds them to the mux.
 func (r *Router) Get(path string, h http.Handler) {
-	r.hr.Handler("GET", r.path+path, h)
+	r.hr.Handler(http.MethodGet, r.path+path, h)
 }
 
 // Post takes a path and http.Handler and adds them to the mux.
 func (r *Router) Post(path string, h http.Handler) {
-	r.hr.Handler("POST", r.path+path, h)
+	r.hr.Handler(http.MethodPost, r.path+path, h)
 }
 
 // Put takes a path and http.Handler and adds them to the mux.
 func (r *Router) Put(path string, h http.Handler) {
-	r.hr.Handler("PUT", r.path+path, h)
+	r.hr.Handler(http.MethodPut, r.path+path, h)
 }
 
 // Patch takes a path and http.Handler and adds them to the mux.
 func (r *Router) Patch(path string, h http.Handler) {
-	r.hr.Handler("PATCH", r.path+path, h)
+	r.hr.Handler(http.MethodPatch, r.path+path, h)
 }
 
 // Delete takes a path and http.Handler and adds them to the mux.
 func (r *Router) Delete(path string, h http.Handler) {
-	r.hr.Handler("DELETE", r.path+path, h)
+	r.hr.Handler(http.MethodDelete, r.path+path, h)
 }
 
 // Head takes a path and http.Handler and adds them to the mux.
 func (r *Router) Head(path string, h http.Handler) {
-	r.hr.Handler("HEAD", r.path+path, h)
+	r.hr.Handler(http.MethodHead, r.path+path, h)
 }
 
-// Handle receives an HTTP method, path, and http.Handler and adds them to
-// the mux.
-func (r *Router) Handle(method string, path string, h http.Handler) {
-	r.hr.Handler(method, path, h)
+// Trace takes a path and http.Handler and adds them to the mux.
+func (r *Router) Trace(path string, h http.Handler) {
+	r.hr.Handler(http.MethodTrace, r.path+path, h)
 }
 
+// Connect takes a path and http.Handler and adds them to the mux.
+func (r *Router) Connect(path string, h http.Handler) {
+	r.hr.Handler(http.MethodConnect, r.path+path, h)
+}
+
+// OptionsAuto ... TODO:
 func (r *Router) OptionsAuto(path string, handlerWrapper func(http.Handler) http.Handler) {
 	h, _, s := r.hr.Lookup(http.MethodOptions, path)
 	if s {
@@ -207,43 +199,47 @@ func (tm *TreeMux) Group(path string) *TreeMux {
 
 // Options takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Options(path string, h http.Handler) {
-	tm.tm.Handle("OPTIONS", tm.path+path, treeMuxWrapper(h))
+	tm.tm.Handle(http.MethodOptions, tm.path+path, treeMuxWrapper(h))
 }
 
 // Get takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Get(path string, h http.Handler) {
-	tm.tm.Handle("GET", tm.path+path, treeMuxWrapper(h))
+	tm.tm.Handle(http.MethodGet, tm.path+path, treeMuxWrapper(h))
 }
 
 // Post takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Post(path string, h http.Handler) {
-	tm.tm.Handle("POST", tm.path+path, treeMuxWrapper(h))
+	tm.tm.Handle(http.MethodPost, tm.path+path, treeMuxWrapper(h))
 }
 
 // Put takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Put(path string, h http.Handler) {
-	tm.tm.Handle("PUT", tm.path+path, treeMuxWrapper(h))
+	tm.tm.Handle(http.MethodPut, tm.path+path, treeMuxWrapper(h))
 }
 
 // Patch takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Patch(path string, h http.Handler) {
-	tm.tm.Handle("PATCH", tm.path+path, treeMuxWrapper(h))
+	tm.tm.Handle(http.MethodPatch, tm.path+path, treeMuxWrapper(h))
 }
 
 // Delete takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Delete(path string, h http.Handler) {
-	tm.tm.Handle("DELETE", tm.path+path, treeMuxWrapper(h))
+	tm.tm.Handle(http.MethodDelete, tm.path+path, treeMuxWrapper(h))
 }
 
 // Head takes a path and http.Handler and adds them to the mux.
 func (tm *TreeMux) Head(path string, h http.Handler) {
-	tm.tm.Handle("HEAD", tm.path+path, treeMuxWrapper(h))
+	tm.tm.Handle(http.MethodHead, tm.path+path, treeMuxWrapper(h))
 }
 
-// Handle receives an HTTP method, path, and http.Handler and adds them to
-// the mux.
-func (tm *TreeMux) Handle(method string, path string, h http.Handler) {
-	tm.tm.Handle(method, path, treeMuxWrapper(h))
+// Trace takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Trace(path string, h http.Handler) {
+	tm.tm.Handle(http.MethodTrace, tm.path+path, treeMuxWrapper(h))
+}
+
+// Connect takes a path and http.Handler and adds them to the mux.
+func (tm *TreeMux) Connect(path string, h http.Handler) {
+	tm.tm.Handle(http.MethodConnect, tm.path+path, treeMuxWrapper(h))
 }
 
 // ServeHTTP satisfies the http.Handler interface.

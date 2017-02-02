@@ -105,7 +105,7 @@ func TestRouterMethods(t *testing.T) {
 
 func TestTreeMuxMethods(t *testing.T) {
 	h := http.HandlerFunc(methodHandler)
-	m := mixmux.NewTreeMux()
+	m := mixmux.NewTreeMux(nil)
 	mg := m.Group("/grouped")
 	mg.Options("/options", h)
 	mg.Get("/get", h)
@@ -214,7 +214,7 @@ func BenchmarkHTTPRouter2(b *testing.B) {
 }
 
 func BenchmarkMixmuxTreeMux2(b *testing.B) {
-	m := mixmux.NewTreeMux()
+	m := mixmux.NewTreeMux(nil)
 	m.Get("/test/test/:id/:last",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			return

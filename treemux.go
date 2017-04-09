@@ -132,8 +132,8 @@ func (m *TreeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.t.ServeHTTP(w, r)
 }
 
-// OptionsHeaders ... TODO:
-func (m *TreeMux) OptionsHeaders(path string, handlerWrappers ...func(http.Handler) http.Handler) {
+// CORSMethods ... TODO:
+func (m *TreeMux) CORSMethods(path string, handlerWrappers ...func(http.Handler) http.Handler) {
 	x, s := m.lookup(http.MethodOptions, path)
 	if s {
 		x, _ = m.lookup(http.MethodOptions, path+"/")

@@ -94,7 +94,7 @@ func (m *Router) CORSMethods(path string, handlerWrappers ...func(http.Handler) 
 			continue
 		}
 
-		h, _, s = m.r.Lookup(v, path)
+		h, _, s := m.r.Lookup(v, path)
 		if s {
 			h, _, _ = m.r.Lookup(v, path+"/")
 		}

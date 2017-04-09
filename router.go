@@ -87,14 +87,6 @@ func (m *Router) Connect(path string, h http.Handler) {
 
 // CORSMethods ... TODO:
 func (m *Router) CORSMethods(path string, handlerWrappers ...func(http.Handler) http.Handler) {
-	h, _, s := m.r.Lookup(http.MethodOptions, path)
-	if s {
-		h, _, _ = m.r.Lookup(http.MethodOptions, path+"/")
-	}
-	if h != nil {
-		return
-	}
-
 	ms := []string{http.MethodOptions}
 
 	for _, v := range methods {

@@ -134,14 +134,6 @@ func (m *TreeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // CORSMethods ... TODO:
 func (m *TreeMux) CORSMethods(path string, handlerWrappers ...func(http.Handler) http.Handler) {
-	x, s := m.lookup(http.MethodOptions, path)
-	if s {
-		x, _ = m.lookup(http.MethodOptions, path+"/")
-	}
-	if !x {
-		return
-	}
-
 	ms := []string{http.MethodOptions}
 
 	for _, v := range methods {
@@ -149,7 +141,7 @@ func (m *TreeMux) CORSMethods(path string, handlerWrappers ...func(http.Handler)
 			continue
 		}
 
-		x, s = m.lookup(v, path)
+		x, s := m.lookup(v, path)
 		if s {
 			x, _ = m.lookup(v, path+"/")
 		}

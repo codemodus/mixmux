@@ -9,26 +9,38 @@ handling is bypassed.
 ## Usage
 
 ```go
+type Mux
+type Options
 type Router
-    func NewRouter() *Router
-    func (r *Router) Delete(path string, h http.Handler)
-    func (r *Router) Get(path string, h http.Handler)
-    func (r *Router) Group(path string) *Router
-    func (r *Router) Head(path string, h http.Handler)
-    func (r *Router) Options(path string, h http.Handler)
-    func (r *Router) Patch(path string, h http.Handler)
-    func (r *Router) Post(path string, h http.Handler)
-    func (r *Router) Put(path string, h http.Handler)
+    func NewRouter(opts *Options) *Router
+    func (m *Router) CORSMethods(path string, handlerWrappers ...func(http.Handler) http.Handler)
+    func (m *Router) Connect(path string, h http.Handler)
+    func (m *Router) Delete(path string, h http.Handler)
+    func (m *Router) Get(path string, h http.Handler)
+    func (m *Router) Group(path string) *Router
+    func (m *Router) GroupMux(path string) Mux
+    func (m *Router) Head(path string, h http.Handler)
+    func (m *Router) Options(path string, h http.Handler)
+    func (m *Router) Patch(path string, h http.Handler)
+    func (m *Router) Post(path string, h http.Handler)
+    func (m *Router) Put(path string, h http.Handler)
+    func (m *Router) ServeHTTP(w http.ResponseWriter, r *http.Request)
+    func (m *Router) Trace(path string, h http.Handler)
 type TreeMux
-    func NewTreeMux() *TreeMux
-    func (tm *TreeMux) Delete(path string, h http.Handler)
-    func (tm *TreeMux) Get(path string, h http.Handler)
-    func (tm *TreeMux) Group(path string) *TreeMux
-    func (tm *TreeMux) Head(path string, h http.Handler)
-    func (tm *TreeMux) Options(path string, h http.Handler)
-    func (tm *TreeMux) Patch(path string, h http.Handler)
-    func (tm *TreeMux) Post(path string, h http.Handler)
-    func (tm *TreeMux) Put(path string, h http.Handler)
+    func NewTreeMux(opts *Options) *TreeMux
+    func (m *TreeMux) CORSMethods(path string, handlerWrappers ...func(http.Handler) http.Handler)
+    func (m *TreeMux) Connect(path string, h http.Handler)
+    func (m *TreeMux) Delete(path string, h http.Handler)
+    func (m *TreeMux) Get(path string, h http.Handler)
+    func (m *TreeMux) Group(path string) *TreeMux
+    func (m *TreeMux) GroupMux(path string) Mux
+    func (m *TreeMux) Head(path string, h http.Handler)
+    func (m *TreeMux) Options(path string, h http.Handler)
+    func (m *TreeMux) Patch(path string, h http.Handler)
+    func (m *TreeMux) Post(path string, h http.Handler)
+    func (m *TreeMux) Put(path string, h http.Handler)
+    func (m *TreeMux) ServeHTTP(w http.ResponseWriter, r *http.Request)
+    func (m *TreeMux) Trace(path string, h http.Handler)
 ```
 
 ### Setup

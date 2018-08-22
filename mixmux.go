@@ -27,3 +27,20 @@ type Options struct {
 	NotFound               http.Handler
 	MethodNotAllowed       http.Handler
 }
+
+// Mux ...
+type Mux interface {
+	http.Handler
+
+	GroupMux(path string) Mux
+	Options(path string, h http.Handler)
+	Get(path string, h http.Handler)
+	Post(path string, h http.Handler)
+	Put(path string, h http.Handler)
+	Patch(path string, h http.Handler)
+	Delete(path string, h http.Handler)
+	Head(path string, h http.Handler)
+	Trace(path string, h http.Handler)
+	Connect(path string, h http.Handler)
+	CORSMethods(path string, handlerWrappers ...func(http.Handler) http.Handler)
+}

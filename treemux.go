@@ -82,6 +82,11 @@ func (m *TreeMux) Group(path string) *TreeMux {
 	return &TreeMux{m.t, m.path + path, m.reg}
 }
 
+// GroupMux takes a path and returns a new TreeMux wrapping the original TreeMux.
+func (m *TreeMux) GroupMux(path string) Mux {
+	return &TreeMux{m.t, m.path + path, m.reg}
+}
+
 // Options takes a path and http.Handler and adds them to the mux.
 func (m *TreeMux) Options(path string, h http.Handler) {
 	m.handle(http.MethodOptions, m.path+path, h)

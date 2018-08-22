@@ -40,6 +40,11 @@ func (m *Router) Group(path string) *Router {
 	return &Router{m.r, m.path + path}
 }
 
+// GroupMux takes a path and returns a new Router wrapping the original Router.
+func (m *Router) GroupMux(path string) Mux {
+	return &Router{m.r, m.path + path}
+}
+
 // Options takes a path and http.Handler and adds them to the mux.
 func (m *Router) Options(path string, h http.Handler) {
 	m.r.Handler(http.MethodOptions, m.path+path, h)

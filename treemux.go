@@ -87,6 +87,20 @@ func (m *TreeMux) GroupMux(path string) Mux {
 	return &TreeMux{m.t, m.path + path, m.reg}
 }
 
+// Any takes a path and http.Handler and adds them to the mux.
+func (m *TreeMux) Any(path string, h http.Handler) {
+	p := m.path + path
+	m.handle(http.MethodOptions, p, h)
+	m.handle(http.MethodGet, p, h)
+	m.handle(http.MethodPost, p, h)
+	m.handle(http.MethodPut, p, h)
+	m.handle(http.MethodPatch, p, h)
+	m.handle(http.MethodDelete, p, h)
+	m.handle(http.MethodHead, p, h)
+	m.handle(http.MethodTrace, p, h)
+	m.handle(http.MethodConnect, p, h)
+}
+
 // Options takes a path and http.Handler and adds them to the mux.
 func (m *TreeMux) Options(path string, h http.Handler) {
 	m.handle(http.MethodOptions, m.path+path, h)

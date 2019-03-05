@@ -33,6 +33,7 @@ type Mux interface {
 	http.Handler
 
 	GroupMux(path string) Mux
+	Any(path string, h http.Handler)
 	Options(path string, h http.Handler)
 	Get(path string, h http.Handler)
 	Post(path string, h http.Handler)

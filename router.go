@@ -45,6 +45,20 @@ func (m *Router) GroupMux(path string) Mux {
 	return &Router{m.r, m.path + path}
 }
 
+// Any takes a path and http.Handler and adds them to the mux.
+func (m *Router) Any(path string, h http.Handler) {
+	p := m.path + path
+	m.r.Handler(http.MethodOptions, p, h)
+	m.r.Handler(http.MethodGet, p, h)
+	m.r.Handler(http.MethodPost, p, h)
+	m.r.Handler(http.MethodPut, p, h)
+	m.r.Handler(http.MethodPatch, p, h)
+	m.r.Handler(http.MethodDelete, p, h)
+	m.r.Handler(http.MethodHead, p, h)
+	m.r.Handler(http.MethodTrace, p, h)
+	m.r.Handler(http.MethodConnect, p, h)
+}
+
 // Options takes a path and http.Handler and adds them to the mux.
 func (m *Router) Options(path string, h http.Handler) {
 	m.r.Handler(http.MethodOptions, m.path+path, h)

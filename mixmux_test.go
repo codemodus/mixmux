@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/codemodus/mixmux"
-	"github.com/dimfeld/httptreemux"
+	"github.com/dimfeld/httptreemux/v5"
 	"github.com/julienschmidt/httprouter"
 )
 
